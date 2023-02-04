@@ -4,6 +4,8 @@
   "description": "phonebook backend",
   "main": "index.js",
   "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -15,5 +17,11 @@
   "bugs": {
     "url": "https://github.com/Joss852/Phonebook-backend/issues"
   },
-  "homepage": "https://github.com/Joss852/Phonebook-backend#readme"
+  "homepage": "https://github.com/Joss852/Phonebook-backend#readme",
+  "dependencies": {
+    "express": "^4.18.2"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.20"
+  }
 }
