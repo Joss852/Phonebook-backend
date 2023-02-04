@@ -42,9 +42,15 @@ app.get('/api/persons/:id', (req, res) => {
 app.post('/api/persons', (req, res) => {
   const body = req.body
 
-  if (!body) {
+  if (!body.name || !body.number) {
     return res.status(400).json({
-      error: 'content missing',
+      error: 'content missing. name or number is missing',
+    })
+  }
+
+  if (data.find(person => person.name === body.name)) {
+    return res.status(400).json({
+      error: 'name must be unique',
     })
   }
 
