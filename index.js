@@ -39,6 +39,26 @@ app.get('/api/persons/:id', (req, res) => {
   else res.status(404).end()
 })
 
+app.post('/api/persons', (req, res) => {
+  const body = req.body
+
+  if (!body) {
+    return res.status(400).json({
+      error: 'content missing',
+    })
+  }
+
+  const person = {
+    id: Math.floor(Math.random() * 100000),
+    name: body.name,
+    number: body.number,
+  }
+
+  data = data.concat(person)
+
+  res.json(person)
+})
+
 app.delete('/api/persons/:id', (req, res) => {
   const id = Number(req.params.id)
 
