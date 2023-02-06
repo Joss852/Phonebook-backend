@@ -25,9 +25,7 @@ app.get('/api/persons', (req, res) => {
 })
 
 app.get('/api/persons/:id', (req, res) => {
-  const id = req.params.id
-
-  Person.find({ _id: id })
+  Person.findById(req.params.id)
     .then(person => {
       res.json(person)
     })
@@ -73,10 +71,12 @@ app.delete('/api/persons/:id', (req, res) => {
 })
 
 app.get('/info', (req, res) => {
-  res.send(`
+  Person.find({}).then(data => {
+    res.send(`
     <p>Phone book has info for ${data.length} people</p>
     <p>${new Date()}</p>
-  `)
+    `)
+  })
 })
 
 const errorHandler = (error, req, res, next) => {
