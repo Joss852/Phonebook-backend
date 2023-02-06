@@ -1,4 +1,4 @@
-# Phonebook backend
+# Full stack phonebook app
 
 This app is part of the **Full Stack Open** course
 
