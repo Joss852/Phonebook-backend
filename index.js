@@ -5,29 +5,6 @@ const app = express()
 const cors = require('cors')
 const Person = require('./models/person')
 
-let data = [
-  {
-    id: 1,
-    name: 'Arto Hellas',
-    number: '040-123456',
-  },
-  {
-    id: 2,
-    name: 'Ada Lovelace',
-    number: '39-44-5323523',
-  },
-  {
-    id: 3,
-    name: 'Dan Abramov',
-    number: '12-43-234345',
-  },
-  {
-    id: 4,
-    name: 'Mary Poppendieck',
-    number: '39-23-6423122',
-  },
-]
-
 morgan.token('req-body', (req, res) => JSON.stringify(req.body))
 
 app.use(cors())
@@ -40,17 +17,21 @@ app.use(
 )
 
 app.get('/api/persons', (req, res) => {
-  Person.find({}).then(persons => {
-    res.json(persons)
-  })
+  Person.find({})
+    .then(persons => {
+      res.json(persons)
+    })
+    .catch(error => next(error))
 })
 
 app.get('/api/persons/:id', (req, res) => {
   const id = req.params.id
 
-  Person.find({ _id: id }).then(person => {
-    res.json(person)
-  })
+  Person.find({ _id: id })
+    .then(person => {
+      res.json(person)
+    })
+    .catch(error => next(error))
 })
 
 app.post('/api/persons', (req, res) => {
@@ -67,9 +48,12 @@ app.post('/api/persons', (req, res) => {
     number: body.number,
   })
 
-  person.save().then(savedPerson => {
-    res.json(savedPerson)
-  })
+  person
+    .save()
+    .then(savedPerson => {
+      res.json(savedPerson)
+    })
+    .catch(error => next(error))
 })
 
 app.delete('/api/persons/:id', (req, res) => {
@@ -86,6 +70,18 @@ app.get('/info', (req, res) => {
     <p>${new Date()}</p>
   `)
 })
+
+const errorHandler = (error, req, res, next) => {
+  console.log(error.message)
+
+  if (error.name === 'CastError') {
+    return res.status(400).send({ error: 'Malformatted id' })
+  }
+
+  next(error)
+}
+
+app.use(errorHandler)
 
 const PORT = process.env.PORT || 3001
 app.listen(PORT, () => {
