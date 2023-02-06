@@ -46,12 +46,11 @@ app.get('/api/persons', (req, res) => {
 })
 
 app.get('/api/persons/:id', (req, res) => {
-  const id = Number(req.params.id)
+  const id = req.params.id
 
-  const person = data.find(person => person.id === id)
-
-  if (person) res.json(person)
-  else res.status(404).end()
+  Person.find({ _id: id }).then(person => {
+    res.json(person)
+  })
 })
 
 app.post('/api/persons', (req, res) => {
