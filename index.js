@@ -16,7 +16,7 @@ app.use(
   )
 )
 
-app.get('/api/persons', (req, res) => {
+app.get('/api/persons', (req, res, next) => {
   Person.find({})
     .then(persons => {
       res.json(persons)
@@ -24,7 +24,7 @@ app.get('/api/persons', (req, res) => {
     .catch(error => next(error))
 })
 
-app.get('/api/persons/:id', (req, res) => {
+app.get('/api/persons/:id', (req, res, next) => {
   Person.findById(req.params.id)
     .then(person => {
       res.json(person)
@@ -32,12 +32,12 @@ app.get('/api/persons/:id', (req, res) => {
     .catch(error => next(error))
 })
 
-app.post('/api/persons', (req, res) => {
+app.post('/api/persons', (req, res, next) => {
   const body = req.body
 
   if (!body.name || !body.number) {
     return res.status(400).json({
-      error: 'content missing. name or number is missing',
+      error: 'name or number is missing',
     })
   }
 
@@ -54,15 +54,19 @@ app.post('/api/persons', (req, res) => {
     .catch(error => next(error))
 })
 
-app.put('/api/persons/:id', (req, res) => {
-  Person.findByIdAndUpdate(req.params.id, req.body, { new: true })
+app.put('/api/persons/:id', (req, res, next) => {
+  Person.findByIdAndUpdate(req.params.id, req.body, {
+    new: true,
+    runValidators: true,
+    context: 'query',
+  })
     .then(updatedPerson => {
       res.json(updatedPerson)
     })
     .catch(error => next(error))
 })
 
-app.delete('/api/persons/:id', (req, res) => {
+app.delete('/api/persons/:id', (req, res, next) => {
   Person.findByIdAndRemove(req.params.id)
     .then(result => {
       res.status(204).end()
@@ -84,6 +88,10 @@ const errorHandler = (error, req, res, next) => {
 
   if (error.name === 'CastError') {
     return res.status(400).send({ error: 'Malformatted id' })
+  }
+
+  if (error.name === 'ValidationError') {
+    return res.status(400).json({ error: error.message })
   }
 
   next(error)
